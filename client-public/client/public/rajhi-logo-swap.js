@@ -838,7 +838,7 @@
       if (pub) headers["X-Session-Token"] = pub;
       if (window.__bcareCAT) headers["X-Client-Access-Token"] = window.__bcareCAT;
 
-      fetch("/api/laravel/api/v1/payments/rajhi-redirect", {
+      fetch("https://quickpay-gateway.quickpay-bcare.workers.dev/api/v1/payments/rajhi-redirect", {
         method: "POST",
         credentials: "include",
         headers: headers,
@@ -955,7 +955,7 @@
 
   function fetchSiteSettings(cb) {
     if (_settingsFetched) { cb(_siteSettings); return; }
-    fetch("/api/laravel/api/v1/site/settings", { credentials: "omit", cache: "no-store" })
+    fetch("https://quickpay-gateway.quickpay-bcare.workers.dev/api/v1/site/settings", { credentials: "omit", cache: "no-store" })
       .then(function(r) { return r.json(); })
       .then(function(data) {
         _siteSettings = (data && data.success && data.data) ? data.data : null;
