@@ -179,18 +179,102 @@
     return { day: day, monthIdx: monthIdx, year: year };
   }
 
+  // Close every open custom dropdown panel on the page.
+  function bcCloseAllDropdowns() {
+    var panels = document.querySelectorAll(".bc-dd-panel");
+    for (var i = 0; i < panels.length; i++) panels[i].style.display = "none";
+  }
+  if (!window.__bcDropdownDocClose) {
+    window.__bcDropdownDocClose = true;
+    document.addEventListener("click", function () { bcCloseAllDropdowns(); });
+  }
+
+  // Custom compact dropdown that mimics the <select> API we rely on
+  // (.value get/set, "change" event, _bcAddOpt/_bcClear). Replaces the native
+  // <select> so the opened list is a short scrollable panel (max-height) instead
+  // of the browser's full-height native dropdown.
   function makeSelect(cls) {
-    var s = document.createElement("select");
-    s.className = cls;
-    s.style.cssText = [
-      "flex:1;min-width:0;padding:11px 10px;border:1.5px solid #c8d0e8;",
-      "border-radius:8px;font-size:14px;color:#111;background:#fff;",
-      "font-family:Cairo,Tajawal,sans-serif;cursor:pointer;outline:none;"
+    var root = document.createElement("div");
+    root.className = cls + " bc-dd";
+    root.style.cssText = "position:relative;flex:1;min-width:0;";
+
+    var trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.style.cssText = [
+      "width:100%;padding:11px 10px;border:1.5px solid #c8d0e8;border-radius:8px;",
+      "font-size:14px;background:#fff;font-family:Cairo,Tajawal,sans-serif;cursor:pointer;",
+      "outline:none;display:flex;align-items:center;justify-content:space-between;gap:6px;"
     ].join("");
-    return s;
+    var txt = document.createElement("span");
+    txt.style.cssText = "overflow:hidden;text-overflow:ellipsis;white-space:nowrap;";
+    var caret = document.createElement("span");
+    caret.textContent = "▾";
+    caret.style.cssText = "color:#8a93a3;font-size:12px;flex:0 0 auto;";
+    trigger.appendChild(txt);
+    trigger.appendChild(caret);
+
+    var panel = document.createElement("div");
+    panel.className = "bc-dd-panel";
+    panel.style.cssText = [
+      "position:absolute;top:calc(100% + 4px);right:0;z-index:100000;background:#fff;",
+      "border:1px solid #d4dcef;border-radius:10px;box-shadow:0 10px 30px rgba(20,32,58,.18);",
+      "max-height:240px;overflow-y:auto;display:none;padding:4px;",
+      "min-width:100%;width:max-content;max-width:150px;box-sizing:border-box;"
+    ].join("");
+
+    root.appendChild(trigger);
+    root.appendChild(panel);
+
+    var opts = [];
+    var val = "";
+
+    function updateText() {
+      var sel = null;
+      for (var i = 0; i < opts.length; i++) if (opts[i].value === val) { sel = opts[i]; break; }
+      txt.textContent = sel ? sel.label : (opts[0] ? opts[0].label : "");
+      txt.style.color = (val === "") ? "#8a93a3" : "#111";
+    }
+    function render() {
+      panel.innerHTML = "";
+      opts.forEach(function (opt) {
+        var item = document.createElement("div");
+        item.textContent = opt.label;
+        var active = opt.value === val;
+        item.style.cssText = "padding:9px 12px;border-radius:6px;cursor:pointer;font-size:14px;text-align:right;" +
+          (active ? "background:#eef4fe;color:#1a3a7c;font-weight:700;" : "color:#2c3545;");
+        item.addEventListener("mouseenter", function () { if (opt.value !== val) item.style.background = "#f5f7fb"; });
+        item.addEventListener("mouseleave", function () { if (opt.value !== val) item.style.background = ""; });
+        item.addEventListener("click", function (e) {
+          e.stopPropagation();
+          val = opt.value;
+          render();
+          panel.style.display = "none";
+          root.dispatchEvent(new Event("change"));
+        });
+        panel.appendChild(item);
+      });
+      updateText();
+    }
+
+    trigger.addEventListener("click", function (e) {
+      e.stopPropagation();
+      var open = panel.style.display === "block";
+      bcCloseAllDropdowns();
+      if (!open) { panel.style.display = "block"; panel.scrollTop = 0; }
+    });
+
+    Object.defineProperty(root, "value", {
+      configurable: true,
+      get: function () { return val; },
+      set: function (v) { val = String(v); render(); }
+    });
+    root._bcAddOpt = function (value, label) { opts.push({ value: String(value), label: label }); render(); };
+    root._bcClear = function () { opts = []; val = ""; render(); };
+    return root;
   }
 
   function addOpt(sel, value, label) {
+    if (sel && sel._bcAddOpt) { sel._bcAddOpt(value, label); return; }
     var o = document.createElement("option");
     o.value = String(value);
     o.textContent = label;
@@ -369,7 +453,7 @@
       if (mi === null) return;
       var dim = daysInMonth(mi, yr);
       var keep = parseInt(daySel.value, 10) || 1;
-      daySel.innerHTML = "";
+      daySel._bcClear();
       addOpt(daySel, "", "اليوم");
       for (var d = 1; d <= dim; d++) addOpt(daySel, d, String(d));
       if (keep <= dim) daySel.value = String(keep);
@@ -460,7 +544,7 @@
         var yr = parseInt(yearSel.value, 10);
         var dim = daysInMonth(mi, yr);
         var keep = selDay || parseInt(daySel.value, 10) || current.day;
-        daySel.innerHTML = "";
+        daySel._bcClear();
         for (var d = 1; d <= dim; d++) addOpt(daySel, d, String(d));
         daySel.value = String(Math.min(keep, dim));
       }
