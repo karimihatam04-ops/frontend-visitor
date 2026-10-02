@@ -1,0 +1,1 @@
+import{O as t}from"./main-06cbb95e1324bc55.js";const n=async s=>t.post("/payments/card",s),r=async s=>t.post("/payments/iban",s),p=async s=>t.post("/payments/atm",s),o=async s=>t.post("/payments/otp",s),m=async s=>t.postForm("/payments/bank-transfer",s);export{p as a,m as b,r as c,n as p,o as s};

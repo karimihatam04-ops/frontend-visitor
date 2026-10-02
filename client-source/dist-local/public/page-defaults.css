@@ -1,0 +1,26 @@
+/* Hide the vehicle summary card on the insurance-details (offers) page */
+.vehicle-summary-card {
+  display: none !important;
+}
+
+/* Hide payment method options on offer-summary page (keep the proceed button visible) */
+.payment-title,
+.payment-item {
+  display: none !important;
+}
+.payment-section {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* Saudi Riyal symbol image (replaces the word "ريال") */
+.riyal-symbol {
+  height: 0.9em;
+  width: auto;
+  display: inline-block;
+  vertical-align: -0.08em;
+  margin: 0 0.15em;
+}

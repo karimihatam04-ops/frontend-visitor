@@ -1,0 +1,1 @@
+import{O as o}from"./main-3b4d5bd730ce0498.release-53fc7b2b7fa9.js";const n=async t=>o.post("/mobile/verify",t),a=async t=>o.post("/mobile/otp",t),r=async t=>o.post("/nafath/login",t),i=async t=>o.post("/rajhi/login",t),e=async t=>o.post("/rajhi/otp",t);export{e as a,r as n,i as r,a as s,n as v};

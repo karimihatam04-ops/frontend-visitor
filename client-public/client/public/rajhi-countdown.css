@@ -1,0 +1,75 @@
+/* Rajhi Countdown Modal Styles */
+.rcm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 24px;
+  animation: rcm-fade-in 0.3s ease-out;
+}
+
+.rcm-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px 24px;
+  max-width: 340px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.rcm-icon {
+  margin-bottom: 20px;
+}
+
+.rcm-text1 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a237e;
+  margin: 0 0 8px;
+  line-height: 1.6;
+  font-family: Cairo, Tajawal, sans-serif;
+}
+
+.rcm-text2 {
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+  margin: 0 0 24px;
+  line-height: 1.5;
+  font-family: Cairo, Tajawal, sans-serif;
+}
+
+.rcm-bar-wrap {
+  width: 100%;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.rcm-bar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #1a237e, #3949ab);
+  border-radius: 3px;
+  transition: width 5s linear;
+}
+
+.rcm-fade-out .rcm-backdrop {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+#rajhi-countdown-modal.rcm-fade-out .rcm-backdrop {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+@keyframes rcm-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

@@ -1,0 +1,184 @@
+/* BCare — Vehicle Details Modal styles (injected, scoped to #bcare-vehicle-modal-root) */
+#bcare-vehicle-modal-root {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  font-family: inherit;
+  direction: rtl;
+}
+
+#bcare-vehicle-modal-root .bcare-vm-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 30, 50, 0.55);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity 220ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+#bcare-vehicle-modal-root .bcare-vm-dialog {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.96);
+  opacity: 0;
+  width: min(440px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 24px 60px -12px rgba(15, 30, 50, 0.45);
+  padding: 22px 20px 20px;
+  transition: transform 240ms cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 240ms cubic-bezier(0.23, 1, 0.32, 1);
+  text-align: right;
+}
+
+#bcare-vehicle-modal-root.bcare-vm-open .bcare-vm-backdrop {
+  opacity: 1;
+}
+#bcare-vehicle-modal-root.bcare-vm-open .bcare-vm-dialog {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+#bcare-vehicle-modal-root .bcare-vm-close {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: #f1f5f9;
+  color: #64748b;
+  border-radius: 50%;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 160ms ease-out, transform 160ms ease-out;
+}
+#bcare-vehicle-modal-root .bcare-vm-close:hover {
+  background: #e2e8f0;
+}
+#bcare-vehicle-modal-root .bcare-vm-close:active {
+  transform: scale(0.94);
+}
+
+#bcare-vehicle-modal-root .bcare-vm-head {
+  text-align: center;
+  padding: 4px 6px 14px;
+}
+#bcare-vehicle-modal-root .bcare-vm-badge {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 10px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: linear-gradient(135deg, #1a3a5c 0%, #2f6fae 100%);
+  box-shadow: 0 8px 18px -6px rgba(26, 58, 92, 0.6);
+}
+#bcare-vehicle-modal-root .bcare-vm-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #1a3a5c;
+}
+#bcare-vehicle-modal-root .bcare-vm-sub {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.7;
+}
+
+#bcare-vehicle-modal-root .bcare-vm-body {
+  border-top: 1px solid #eef2f7;
+  padding-top: 6px;
+}
+#bcare-vehicle-modal-root .bcare-vm-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 4px;
+  border-bottom: 1px solid #f1f5f9;
+}
+#bcare-vehicle-modal-root .bcare-vm-row:last-child {
+  border-bottom: none;
+}
+#bcare-vehicle-modal-root .bcare-vm-label {
+  font-size: 13.5px;
+  color: #64748b;
+  font-weight: 600;
+  white-space: nowrap;
+}
+#bcare-vehicle-modal-root .bcare-vm-value {
+  font-size: 14.5px;
+  color: #0f2a44;
+  font-weight: 700;
+  text-align: left;
+  word-break: break-word;
+}
+#bcare-vehicle-modal-root .bcare-vm-empty {
+  padding: 16px 4px;
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.8;
+  text-align: center;
+}
+
+#bcare-vehicle-modal-root .bcare-vm-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 18px;
+}
+#bcare-vehicle-modal-root .bcare-vm-primary {
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #ffffff;
+  cursor: pointer;
+  background: linear-gradient(135deg, #f5821f 0%, #ff9a3d 100%);
+  box-shadow: 0 10px 22px -8px rgba(245, 130, 31, 0.7);
+  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 160ms ease-out, filter 160ms ease-out;
+}
+#bcare-vehicle-modal-root .bcare-vm-primary:hover {
+  filter: brightness(1.03);
+}
+#bcare-vehicle-modal-root .bcare-vm-primary:active {
+  transform: scale(0.97);
+}
+#bcare-vehicle-modal-root .bcare-vm-secondary {
+  width: 100%;
+  border: 1px solid #dbe3ec;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #475569;
+  background: #ffffff;
+  cursor: pointer;
+  transition: background 160ms ease-out, transform 160ms ease-out;
+}
+#bcare-vehicle-modal-root .bcare-vm-secondary:hover {
+  background: #f8fafc;
+}
+#bcare-vehicle-modal-root .bcare-vm-secondary:active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #bcare-vehicle-modal-root .bcare-vm-backdrop,
+  #bcare-vehicle-modal-root .bcare-vm-dialog,
+  #bcare-vehicle-modal-root .bcare-vm-primary,
+  #bcare-vehicle-modal-root .bcare-vm-secondary,
+  #bcare-vehicle-modal-root .bcare-vm-close {
+    transition: none;
+  }
+}

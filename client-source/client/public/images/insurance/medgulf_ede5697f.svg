@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" width="200" height="80">
+  <rect width="200" height="80" fill="white"/>
+  <!-- Medgulf icon - stylized M -->
+  <rect x="8" y="20" width="8" height="40" fill="#006b8f"/>
+  <rect x="8" y="20" width="30" height="8" fill="#006b8f"/>
+  <rect x="30" y="20" width="8" height="40" fill="#006b8f"/>
+  <!-- Text -->
+  <text x="55" y="35" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#006b8f" text-anchor="start">ميدغلف</text>
+  <text x="55" y="55" font-family="Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">MEDGULF</text>
+</svg>

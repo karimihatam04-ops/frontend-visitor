@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" width="200" height="80">
+  <rect width="200" height="80" fill="white"/>
+  <!-- Tawuniya circle icon -->
+  <circle cx="35" cy="40" r="28" fill="none" stroke="#1a7ab5" stroke-width="8"/>
+  <path d="M35 12 Q55 25 55 40 Q55 55 35 68" fill="#1a7ab5" opacity="0.7"/>
+  <!-- Text -->
+  <text x="75" y="32" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a7ab5" text-anchor="start">التعاونية</text>
+  <text x="75" y="52" font-family="Arial, sans-serif" font-size="12" fill="#555" text-anchor="start">tawuniya</text>
+</svg>
